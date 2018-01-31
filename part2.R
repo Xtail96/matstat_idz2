@@ -57,32 +57,31 @@ plot(selection.empirical.function, col="blue", verticals = TRUE, main = "Эмп�
 
 # верхняя граница (целые числа, не меньшие соответсвующих чисел в переданом векторе, в данном случае вектор состоит из 1 элемента)
 # в качестве верхней границы берем верхнюю границу группы с максимальным в выборке значением
-upper.bound <- ceiling(selection.unique.x[length(selection.unique.x)])
-#upper.bound <- ceiling(selection.unique.y[m_h] - selection.unique.y[1]/m_h)
+upper.bound <- ceiling(max(m_selection))
 
 # вектор границ для гисограммы
 # заполняем первый элемент вручную
-k <- selection.sorted[1] - m_h/2
-for(i in 2:(upper.bound + 2))
+k <- 0;
+for(i in 2:(upper.bound))
 {
   k[i] <- k[i-1] + m_h
 }
 
-h <- hist(selection,
+h <- hist(m_selection,
           col="lightblue",
           main = "Гистограмма частот",
           xlab = "Элементы выборки",
           ylab = "Частота встречи",
           breaks = k,
-          right = TRUE)
+          right = FALSE)
 
-plot(h$counts ~ h$mids,
-     col="red",
-     type="l",
-     bty="n",
-     main="Полигон частот для x",
-     xlab="x",
-     ylab="Частота")
+#plot(h$counts ~ h$mids,
+#     col="red",
+#     type="l",
+#     bty="n",
+#     main="Полигон частот для x",
+#     xlab="x",
+#     ylab="Частота")
 
 # ----- b -----
 print("Выборочное среднее (Математическое ожидание):")
@@ -195,34 +194,51 @@ print(max.value)
 print("-------------------------------------------------------")
 
 # ----- f -----
-#print(h$breaks)
-#lambda <- 1/selection.mean
-#print(lambda)
+# выделяем промежутки ([0; 1.1) [1.1; 2.2)  [2.2; 4.4) [4.4; 8.8) [8.8; +inf) )
+# считаем практическое значение
+print("nk (значения, которые получились):")
+nk <- c(25, 14, 3+3, 0+1+0+2, 0+1+0+0+1)
+r <- 5
+print(nk)
 
-#nk <- c(20, 19, 7, 2, 2)
-#print("nk:")
-#print(nk)
-#pk <- dpois(c(0, 1, 2, 3), 2)
-#print("pk:")
-#pk <- c(pk, (1 - sum(pk)))
-#print(pk)
-#xi2 <- as.numeric(chisq.test(nk, p = pk)[1]$statistic)
-#kvantil <- qchisq(1 - a1, 4)
+# считаем теоретическое значение
+print("pk (плотность каждого интервала):")
+pk <- array(dim = 5)
+left.bound <- c(0.0, 1.1, 2.2, 4.4)
+right.bound <- c(1.1, 2.2, 4.4, 8.8)
+pk <- pexp(right.bound, m_lambda0) - pexp(left.bound, m_lambda0)
+pk[5] <- 1 - sum(pk)
+print(pk)
 
-#print("xi2:")
-#print(xi2)
-#print("kvantil:")
-#print(kvantil)
+print("npk (значения, которые должны были получиться):")
+npk <- pk*n
+print(npk)
 
-#if(xi2 > kvantil)
-#{
-#  print("Гипотезу H0 нужно отвергнуть")
-#}else
-#{
-#  print("Гипотезу H0 нужно принять")
-#}
+print("test1:")
+test1 <- chisq.test(nk, p = pk)
+print(test1)
 
-#max.value <- 1 - pchisq(xi2, 4)
-#print("maxValue:")
-#print(max.value)
+print("xi^2 экспериментальное:")
+xi2 <- as.numeric(test1[1]$statistic)
+print(xi2)
 
+print("Теоретическое значение на уровне alpha2:")
+print("alpha2:")
+print(m_alpha2)
+print("value:")
+kvantil <- qchisq(1 - m_alpha2, 4)
+print(kvantil)
+
+if(xi2 > kvantil)
+{
+  print("Гипотезу H0 нужно отвергнуть")
+}else
+{
+  print("Гипотезу H0 нужно принять")
+}
+
+print("maxValue:")
+max.value <- 1 - pchisq(xi2, 4)
+print(max.value)
+
+print("-------------------------------------------------------")
