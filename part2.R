@@ -291,3 +291,41 @@ max.value <- 1 - pchisq(xi2, 3)
 print(max.value)
 print("-------------------------------------------------------")
 
+# ----- h -----
+prod0 = prod(dexp(m_selection, m_lambda0))
+prodA = prod(dexp(m_selection, m_lambda1))
+
+print("test1. Для основной гипотезы:")
+print("Отношение правдоподобия:")
+ratio <- prod0/prodA
+print(ratio)
+print("Критическое значение:")
+critical.value <- qexp(1 - m_alpha2, m_lambda1)
+print(critical.value)
+if(ratio > critical.value)
+{
+  print("отклоняем основную гипотезу (X ~ Exp(lambda)) и принимаем альтернативу")
+} else
+{
+  print("принимаем гипотезу X ~ Exp(lambda) на уровне значимости alpha2")
+}
+
+print("Меняем гипотезы местами")
+
+print("test2. Для для альтернативной гипотезы:")
+print("Отношение правдоподобия:")
+ratio <- prodA/prod0
+print(ratio)
+print("Критическое значение:")
+critical.value <- qexp(1 - m_alpha2, m_lambda0)
+print(critical.value)
+
+if(ratio > critical.value)
+{
+  print("отклоняем основную гипотезу (X ~ Exp(lambda)) и принимаем альтернативу")
+} else
+{
+  print("принимаем гипотезу X ~ Exp(lambda) на уровне значимости alpha2")
+}
+print("-------------------------------------------------------")
+
