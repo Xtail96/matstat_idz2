@@ -76,6 +76,14 @@ h <- hist(selection,
           breaks = k,
           right = TRUE)
 
+plot(h$counts ~ h$mids,
+     col="red",
+     type="l",
+     bty="n",
+     main="Полигон частот для x",
+     xlab="x",
+     ylab="Частота")
+
 # ----- b -----
 print("Выборочное среднее (Математическое ожидание):")
 selection.mean <- sum(m_selection) / length(m_selection)
@@ -149,4 +157,72 @@ T[1] <- selection.mean - d
 T[2] <- selection.mean + d
 print(T)
 print("-------------------------------------------------------")
+
+# ----- e -----
+print("Критерий значимости проверки простой гипотезы с использованием теоремы Колмогорова:")
+#a0 <- selection.mean
+#s0 <- s2
+#x <- m_selection
+#n <- length(m_selection)
+
+# скрипт из методички с изменением распределения
+#v1 <- sort(x)
+#v2 <- c(0:(n-1))/n
+#v3 <- c(1:n)/n
+#v4 <- abs(pexp(v1, a0, s0) - v2)
+#v5 <- abs(pexp(v1, a0, s0) - v3)
+#D <- max(v4, v5)
+#print("D:")
+#print(D)
+
+# проверям простую гипотезу H0 согласия с показательным распределением с параметрами lambda0
+print("lambda0:")
+print(m_lambda0)
+
+# генерируем показательное распределение
+#kolm <- rexp(n, m_lambda0)
+# проверяем нашу выборку на соответствие сгенерированному выше распределению
+#test1 <- ks.test(m_selection, kolm)
+#print(test1)
+
+# проверяем нашу выборку на соответствие показательному распределению без явной генерации тестового распределения
+test2 <- ks.test(m_selection, "pexp", m_lambda0)
+print(test2)
+
+max.value <- test2$p.value
+print("max_value (p-value):")
+print(max.value)
+print("-------------------------------------------------------")
+
+# ----- f -----
+#print(h$breaks)
+#lambda <- 1/selection.mean
+#print(lambda)
+
+#nk <- c(20, 19, 7, 2, 2)
+#print("nk:")
+#print(nk)
+#pk <- dpois(c(0, 1, 2, 3), 2)
+#print("pk:")
+#pk <- c(pk, (1 - sum(pk)))
+#print(pk)
+#xi2 <- as.numeric(chisq.test(nk, p = pk)[1]$statistic)
+#kvantil <- qchisq(1 - a1, 4)
+
+#print("xi2:")
+#print(xi2)
+#print("kvantil:")
+#print(kvantil)
+
+#if(xi2 > kvantil)
+#{
+#  print("Гипотезу H0 нужно отвергнуть")
+#}else
+#{
+#  print("Гипотезу H0 нужно принять")
+#}
+
+#max.value <- 1 - pchisq(xi2, 4)
+#print("maxValue:")
+#print(max.value)
 
