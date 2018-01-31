@@ -242,3 +242,52 @@ max.value <- 1 - pchisq(xi2, 4)
 print(max.value)
 
 print("-------------------------------------------------------")
+
+# ----- g -----
+# функция, минимум которой нужно найти
+theta <- function(lambda)
+{
+  pk <- pexp(right.bound, lambda) - pexp(left.bound, lambda)
+  pk[5] <- 1 - sum(pk)
+  sum(((length(m_selection)*pk - nk)^2)/(length(m_selection)*pk))
+}
+xm <- nlm(theta, p = mean(selection.sorted))
+min.lambda <- xm$estimate
+print("Минимальное значение lambda:")
+print(min.lambda)
+
+
+print("pk (что должно было получиться):")
+pk <- pexp(right.bound, min.lambda) - pexp(left.bound, min.lambda)
+pk[5] <- 1 - sum(pk)
+print(pk)
+
+print("test1:")
+test1 <- chisq.test(nk, p = pk)
+print(test1)
+
+print("xi2 экспериментальное:")
+xi2 <- as.numeric(test1[1]$statistic)
+print(xi2)
+
+
+print("Теоретическое значение на уровне alpha2:")
+print("alha2:")
+print(m_alpha2)
+print("value:")
+kvantil <- qchisq(1 - m_alpha2, 3)
+print(kvantil)
+
+if(xi2 > kvantil)
+{
+  print("Гипотезу H0 нужно отвергнуть")
+}else
+{
+  print("Гипотезу H0 нужно принять")
+}
+
+print("maxValue:")
+max.value <- 1 - pchisq(xi2, 3)
+print(max.value)
+print("-------------------------------------------------------")
+
