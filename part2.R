@@ -70,18 +70,18 @@ for(i in 2:(upper.bound))
 h <- hist(m_selection,
           col="lightblue",
           main = "Гистограмма частот",
-          xlab = "Элементы выборки",
+          xlab = "x",
           ylab = "Частота встречи",
           breaks = k,
           right = FALSE)
 
-#plot(h$counts ~ h$mids,
-#     col="red",
-#     type="l",
-#     bty="n",
-#     main="Полигон частот для x",
-#     xlab="x",
-#     ylab="Частота")
+plot(h$counts ~ h$mids,
+     col="red",
+     type="l",
+     bty="n",
+     main="Полигон частот для x",
+     xlab="x",
+     ylab="Частота")
 
 # ----- b -----
 print("Выборочное среднее (Математическое ожидание):")
