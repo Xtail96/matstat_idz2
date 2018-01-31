@@ -78,12 +78,12 @@ h <- hist(selection,
 
 # ----- b -----
 print("Выборочное среднее (Математическое ожидание):")
-selection.avg <- sum(m_selection) / length(m_selection)
-print(selection.avg)
+selection.mean <- sum(m_selection) / length(m_selection)
+print(selection.mean)
 print("-------------------------------------------------------")
 
-print("Выборочная Дисперсия:")
-s2 <- (1/length(m_selection)*sum((m_selection - selection.avg)^2))
+print("Несмещенная Выборочная Дисперсия:")
+s2 <- (1/(length(m_selection) - 1)*sum((m_selection - selection.mean)^2))
 print(s2)
 print("-------------------------------------------------------")
 
@@ -93,12 +93,12 @@ print(median)
 print("-------------------------------------------------------")
 
 print("Выборочная ассиметрия:")
-assymetry <- (1/length(m_selection)) * sum((m_selection - selection.avg)^3) / s2^(3/2)
+assymetry <- (1/length(m_selection)) * sum((m_selection - selection.mean)^3) / s2^(3/2)
 print(assymetry)
 print("-------------------------------------------------------")
 
 print("Выборочный эксцесс:")
-exc <- ((1/length(m_selection)) * sum((m_selection - selection.avg)^4) / s2^2) - 3
+exc <- ((1/length(m_selection)) * sum((m_selection - selection.mean)^4) / s2^2) - 3
 print(exc)
 print("-------------------------------------------------------")
 
@@ -112,4 +112,41 @@ print("p:")
 print(p)
 print("-------------------------------------------------------")
 
+# ----- c -----
+print("Оценка максимального правдоподобия:")
+log.lik <- function(theta)
+{
+  sum(log(theta) - theta * m_selection)
+}
+grad.lik <- function(theta)
+{
+  sum(1/theta - m_selection)
+}
+hess.lik <- function(theta)
+{
+  -100/theta^2
+}
+a <- maxNR(log.lik, grad.lik, hess.lik, start = 1)
+#print(summary(a))
+print("a$estimate:")
+print(a$estimate)
+print("a$gradient:")
+print(a$gradient)
+print("-------------------------------------------------------")
+
+# ----- d -----
+print("Асимптотический доверительный интервал, уровня значимости alpha2")
+# ОМП +- (x.alpha/sqrt(n*I(ОМП)))
+print("alpha2:")
+print(m_alpha2)
+print("Интервал T:")
+omp <- a$estimate
+x.alpha <- qnorm(1 - m_alpha2/2)
+I = omp^2
+d <- x.alpha / sqrt(length(m_selection) * I)
+T <- array(dim = 2)
+T[1] <- selection.mean - d
+T[2] <- selection.mean + d
+print(T)
+print("-------------------------------------------------------")
 
